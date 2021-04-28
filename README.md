@@ -2,4 +2,4 @@
 
 ##Buzzer
 
-##Scribble
+##Scribble - based on HTML5 canvas
