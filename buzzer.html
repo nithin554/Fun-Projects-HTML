@@ -1,0 +1,128 @@
+<html>
+    <style>
+        body{
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        #div1{
+            height: 49%;
+            width: 100%;
+            position: absolute;
+            left:0px;
+            z-index: 0;
+            text-align: center;
+            padding-top: 100px;
+        }
+        #div2{
+            height: 49%;
+            width: 100%;
+            position: absolute;
+            left:0px;
+            top:50%;
+            z-index: 0;
+            text-align: center;
+            padding-top: 150px;
+        }
+        #b2{
+            z-index: 5;
+            position: absolute;
+            left:85%;
+            top: 20px;
+        }
+        #b3{
+            z-index: 5;
+            position: absolute;
+            left:85%;
+            top: 50px;
+        }
+        #page2{
+            display: none;
+        }
+        #page1{
+            text-align: center;
+            padding-top: 15%;
+        }
+    </style>
+    <head>
+        <title>Buzzer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    </head>
+    <body onload="init()">
+        <div id="page1">
+            <label id="label1">Enter team names:</label><br><br>
+            <input type="text" id="team1" placeholder="Team 1"><br><br>
+            <input type="text" id="team2" placeholder="Team 2"><br><br>
+            <button type="submit" onsubmit='proceed()' onclick="proceed()">Submit</button>
+        </div>
+        <div id="page2">
+        <div id="div1" onclick="buzz(this)">
+            <label id="team1_label"></label>
+        </div>
+        <div id="div2" onclick="buzz(this)">
+            <label id="team2_label"></label>
+        </div>
+        <button id='b2' type="submit" onsubmit="reset()" onclick="reset()">Reset</button>
+        <button id='b3' type="submit" onsubmit="home()" onclick="home()">Home</button>
+        </div>
+        <script>
+            var clicked = 0;
+            function init(){
+                var div1 = document.getElementById('div1');
+                var div2 = document.getElementById('div2');
+                div1.addEventListener("touchstart", touchHandler_div1, false);
+                div2.addEventListener("touchstart", touchHandler_div2, false);
+            }
+            function touchHandler_div1(event) {
+                if(clicked){
+                    return
+                }
+                document.getElementById('div1').style.backgroundColor='lightgreen';
+                document.getElementById('div2').style.backgroundColor='red';
+                clicked = 1;
+            }
+            function touchHandler_div2(event) {
+                if(clicked){
+                    return
+                }
+                document.getElementById('div2').style.backgroundColor='lightgreen';
+                document.getElementById('div1').style.backgroundColor='red';
+                clicked = 1;
+            }
+            //-----for non-touch devices
+            function buzz(o){
+                if(clicked){
+                    return
+                }
+                document.getElementById(o.id).style.backgroundColor='lightgreen';
+                if(o.id=='div1'){
+                    document.getElementById('div2').style.backgroundColor='red';
+                }
+                else{
+                    document.getElementById('div1').style.backgroundColor='red';
+                }
+                clicked = 1;
+            }
+            //-----for non-touch devices
+            function reset(){
+                clicked = 0;
+                document.getElementById('div1').style.backgroundColor='white';
+                document.getElementById('div2').style.backgroundColor='white';
+            }
+            function proceed(){
+                var team1 = document.getElementById('team1').value;
+                var team2 = document.getElementById('team2').value;
+                document.getElementById('page1').style.display = 'none';
+                document.getElementById('page2').style.display = 'block';
+                document.getElementById('team1').innerHTML = team1;
+                document.getElementById('team2').innerHTML = team2;
+                document.getElementById('team1_label').innerHTML = team1;
+                document.getElementById('team2_label').innerHTML = team2;
+            }
+            function home(){
+                document.getElementById('page2').style.display = 'none';
+                document.getElementById('page1').style.display = 'block';
+            }
+        </script>
+    </body>
+</html>

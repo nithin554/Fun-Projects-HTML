@@ -1,0 +1,261 @@
+<html>
+    <style>
+        canvas{
+            border-style: solid;
+            border-color: black;
+            border-width: 1px;
+            cursor: crosshair;
+            background-color: white;
+        }
+        #console,#draw_line{
+            position: absolute;
+            left:1020px;
+        }
+        #console{
+            top: 40px;
+        }
+        #clr_console{
+            position: absolute;
+            left:1020px;
+            top: 360px;
+        }
+        #draw_line{
+            top: 10px;
+        }
+        #mouse_c{
+            position: absolute;
+            left: 1150px;
+            top: 347px;
+        }
+        td{
+            cursor: pointer;
+        }
+    </style>
+    <head>
+        <title>Scribble</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body onload="init()" onkeydown="shift_down(event)" onkeyup="draw_line()">
+        <canvas id="mycanvas" width="1000" height="500">Canvas</canvas><br>
+        <button onclick="make_line()" id="draw_line">Line</button><button onclick="clear_console()" id="clr_console">Clear Console</button><br>
+        <textarea cols='60' rows='20' id="console" disabled>Line button is in development stage&#13;&#10;Select two points on canvas for a line&#13;&#10;Line is drawn between recent points(end to end)&#13;&#10;You can use (Shift) key as shortcut for a line&#13;&#10;</textarea>
+        <label>Size of the pen: </label><input type="number" id="rect_size" placeholder="5" value="5"><button onclick="set_size()">Set</button>
+        <button onclick="clr()">Clear Canvas</button>
+        <button onclick="undo_canvas()">Undo Canvas</button>
+        <button onclick="redo_canvas()">Redo Canvas</button>
+        <button onclick="undo_color()">Undo Color</button>
+        <button onclick="bg_color()">Set Background Color</button>
+        <p id="mouse_c"><label>Mouse Coordinates : </label><label> X : <label id="x_coord"></label></label><label> Y : <label id="y_coord"></label></label></p>
+        <br><br>
+        <label>Shapes of the pen:</label>
+        <table border="1" width="50" height="25" style="position: absolute;left: 130px;top: 568px;">
+            <tr>
+                <td onclick="set_shape(this)" id="square" style="padding-left: 3.5px;cursor: pointer;"><i class="fa fa-square"></i><span class="sr-only">Square</span></td>
+                <td onclick="set_shape(this)" id="circle" style="padding-left: 3.5px;cursor: pointer;"><i class="fa fa-circle"></i><span class="sr-only">Circle</span></td>
+            </tr>
+        </table>
+        <br><br>
+        <table border="1" width="500" height="35">
+            <tr>
+                <td style="background-color: black;" onclick="set_color(this)" title="Black"></td>
+                <td style="background-color: gray;" onclick="set_color(this)" title="Grey"></td>
+                <td style="background-color: red;" onclick="set_color(this)" title="Red"></td>
+                <td style="background-color: maroon;" onclick="set_color(this)" title="Maroon"></td>
+                <td style="background-color: blue;" onclick="set_color(this)" title="Blue"></td>
+                <td style="background-color: royalblue;" onclick="set_color(this)" title="RoyalBlue"></td>
+                <td style="background-color: green;" onclick="set_color(this)" title="Green"></td>
+                <td style="background-color: lightgreen;" onclick="set_color(this)" title="LightGreen"></td>
+                <td style="background-color: yellow;" onclick="set_color(this)" title="Yellow"></td>
+                <td style="background-color: gold;" onclick="set_color(this)" title="Gold"></td>
+                <td style="background-color: white;" onclick="set_color(this)" title="White"></td>
+            </tr>
+        </table>
+    </body>
+    <script>
+        var canvas = document.getElementById("mycanvas");
+        var ctx = canvas.getContext("2d");
+        var size = 5
+        var circle = 1
+        var square = 0
+        ctx.save();
+        var undo_count = 0
+        var key_count = 0;
+        /*var undo_setsX = []
+        var undo_setsY = []*/
+        var mouseX = [];
+        var mouseY = [];
+        //var undo_set_count = 0;
+        var imageData = [];
+        var redo_data = [];
+        imageData.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+        function shift_down(event){
+            if(event.shiftKey && key_count==0){
+                console.log('shiftdown')
+                key_count = 1
+            }
+        }
+        function bg_color(){
+            canvas.style.backgroundColor = ctx.fillStyle;
+        }
+        function clear_console(){
+            document.getElementById('console').innerHTML = 'Line button is in development stage&#13;&#10;Select two points on canvas for a line&#13;&#10;Line is drawn between recent points(end to end)&#13;&#10;You can use (Shift) key as shortcut for a line&#13;&#10;'
+        }
+        function make_line(){
+            key_count = 1;
+            draw_line();
+        }
+        function draw_line(){
+            if(key_count==1){
+            //console.log('shiftup')
+            key_count = 0
+            try{
+                if(mouseX.length<2){
+                    throw 'less points'
+                }
+                var x1 = mouseX[0];
+                var y1 = mouseY[0];
+                var x2 = mouseX[1];
+                var y2 = mouseY[1];
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                document.getElementById('console').innerHTML += 'Drawing Line....&#13;&#10;'
+                imageData.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+            }
+            catch(err){
+                document.getElementById('console').innerHTML += 'Error&#13;&#10;'
+            }}
+        }
+        function undo_color(){
+            if(undo_count==0){
+                ctx.restore();
+                ctx.restore();
+                undo_count = 1;
+                return;
+            }
+            ctx.restore();
+        }
+        function undo_canvas(){
+            try{
+            if(imageData.length>1){
+                redo_data.push(imageData.pop());
+            }
+            ctx.putImageData(imageData[imageData.length-1], 0, 0);
+            }
+            catch(err){
+                imageData = []
+                imageData.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+            }
+        }
+        function redo_canvas(){
+            try{
+                ctx.putImageData(redo_data[redo_data.length-1], 0, 0);
+                imageData.push(redo_data.pop());
+            }
+            catch(err){
+                redo_data = []
+            }
+        }
+        function set_shape(o){
+            if(o.id=='square'){
+                square=1
+                circle=0
+            }
+            else{
+                square=0
+                circle=1
+            }
+        }
+        function set_color(o){
+            ctx.fillStyle = o.style.backgroundColor;
+            ctx.strokeStyle = o.style.backgroundColor;
+            ctx.save();
+            undo_count = 0;
+        }
+        function set_size(){
+            size = document.getElementById('rect_size').value;
+            ctx.lineWidth = size;
+        }
+        function clr(){
+            if(confirm('Are you sure to clear the canvas?')){
+                location.reload();
+            }
+        }
+        function init() {
+            canvas.addEventListener("mousedown", start, false);
+            canvas.addEventListener("mouseup", end, false);
+            canvas.addEventListener("mousemove",listen,false);
+            canvas.addEventListener("mouseout",remove_listener,false);
+            ctx.lineWidth = size;
+        }
+        function remove_listener(){
+            try{
+                canvas.removeEventListener("mousemove", draw, false);
+            }
+            catch(err){
+                return;
+            }
+        }
+        function listen(){
+            document.getElementById('x_coord').innerHTML = event.clientX-9;
+            document.getElementById('y_coord').innerHTML = event.clientY-9;
+        }
+        function start(){
+            /*mouse_pointsX = []
+            mouse_pointsY = []
+            mouse_pointsX.push(event.clientX-10);
+            mouse_pointsY.push(event.clientY-10);*/
+            /*mouseX = event.clientX-10;
+            mouseY = event.clientY-10;
+            console.log(mouseX,mouseY)*/
+            window.oncontextmenu = function () {
+                imageData.pop()
+                ctx.putImageData(imageData[imageData.length-1], 0, 0);
+            }
+            if(square){
+                ctx.fillRect (event.clientX-10, event.clientY-10, size, size);
+            }
+            if(circle){
+                    ctx.beginPath();
+                    ctx.arc(event.clientX-10, event.clientY-10, size, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.closePath();
+                    //ctx.stroke();
+            }
+            canvas.addEventListener("mousemove", draw, false);
+        }
+        function end(){
+            mouseX.push(event.clientX-10);
+            mouseY.push(event.clientY-7);
+            if(mouseX.length>2){
+                mouseX = mouseX.slice(1,mouseX.length)
+                mouseY = mouseY.slice(1,mouseY.length)
+            }
+            //console.log(mouseX,mouseY)
+            /*undo_setsX.push(mouse_pointsX);
+            undo_setsY.push(mouse_pointsY);
+            undo_set_count = 0;*/
+            imageData.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+            redo_data = []
+            //console.log(undo_setsX,undo_setsY)
+            canvas.removeEventListener("mousemove", draw, false);
+        }
+        function draw() {
+           /* mouse_pointsX.push(event.clientX-10);
+            mouse_pointsY.push(event.clientY-10);*/
+            if(canvas.getContext) {
+                if(square){
+                    ctx.fillRect(event.clientX-10, event.clientY-10, size, size);
+                }
+                if(circle){
+                    ctx.beginPath();
+                    ctx.arc(event.clientX-10, event.clientY-10, size, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.closePath();
+                    //ctx.stroke();
+                }
+            }
+        }
+    </script>
+</html>
