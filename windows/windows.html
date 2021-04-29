@@ -1,0 +1,294 @@
+<html>
+    <head>
+        <title>Windows 10 desktop replica</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            body{
+                background-image: url('win10.jpg');
+                background-size: cover;
+                overflow: hidden;
+            }
+            #taskbar{
+                position: absolute;
+                top: 824px;
+                left: -8px;
+                width: 105%;
+                height: 40px;
+                background-color: rgba(0, 0, 0, 0.7);
+            }
+            #full_scr_btn{
+                position: absolute;
+                left: 1380px;
+                background-color: rgba(0, 0, 0, 0.6);
+                border-style: none;
+                color: wheat;
+                height: 30px;
+            }
+            #start{
+                position: absolute;
+                left: 8px;
+                height: 40px;
+                width: 47px;
+            }
+            #taskbar_open{
+                position: absolute;
+                left: -8px;
+                top: 224px;
+                height: 600px;
+                width: 330px;
+                background-color: rgba(0, 0, 0, 0.7);
+                display: none;
+            }
+            #info{
+                position: absolute;
+                top: 380px;
+                left: 580px;
+                width: 400px;
+                height: 60px;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: wheat;
+                text-align: center;
+                padding-top: 40px;
+            }
+            #info_close{
+                background-color: rgba(0, 0, 0, 0);
+                border-style: none;
+                font-size: 20px;
+                cursor: pointer;
+                position: absolute;
+                left: 370px;
+                top: 3px;
+            }
+            #start_left{
+                position: absolute;
+                left: 8px;
+                top: 0px;
+                height: 600px;
+                width: 47px;
+            }
+            #window{
+                position: absolute;
+                top: 200px;
+                left: 400px;
+                height: 500px;
+                width: 600px;
+                background-color: white;
+                border-style: none;
+                display: none;
+                z-index: 1;
+            }
+            #menu_window{
+                position: absolute;
+                top: 175px;
+                left: 400px;
+                height: 25px;
+                width: 600px;
+                background-color: white;
+                display: none;
+                z-index: 1;
+            }
+            #window_close{
+                background-color: white;
+                border-style: none;
+                font-size: 20px;
+                position: absolute;
+                right: 0px;
+                cursor: pointer;
+            }
+            #window_max_min{
+                background-color: white;
+                border-style: none;
+                font-size: 20px;
+                position: absolute;
+                right: 20px;
+                cursor: pointer;
+            }
+            .desktop_icon{
+                position: relative;
+                height: 50px;
+                width: 50px;
+                z-index: 0;
+            }
+            span{
+                color: black;
+            }
+            #myInput {
+                background-image: url('search.jpg');
+                background-size: 6%;
+                background-position: 10px 10px;
+                background-repeat: no-repeat;
+                width: 20%;
+                font-size: 16px;
+                padding: 12px 20px 12px 40px;
+                border: 1px solid #ddd;
+                position: absolute;
+                left: 57px;
+            }
+            .row:hover{
+                background-color: rgba(0, 0, 0, 0.6);
+            }
+            #task_min{
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                left: 385px;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="full_scr_btn" onclick="full_screen()">Switch to FullScreen</button>
+        <div id="taskbar">
+            <img src="start_btn.png" id="start" onclick="open_start()">
+            <!--app minimize function needed-->
+            <input type="text" id="myInput" onkeyup="search_start()" placeholder="Type here to search">
+            <img src="chrome.png" id="task_min" onclick="window_min()">
+        </div>
+        <div id="taskbar_open">
+            <table>
+                <tr>
+                    <td width='47px'>
+                        <img src="start_left.png" id="start_left">
+                    </td>
+                    <td width='283px' style="padding-left: 20px;">
+                        <table style="color: wheat;" id="programs" width='100%'>
+                            <tr height='40px' class="row">
+                                <td>
+                                    <img src='chrome.png' style="width: 30px;height: 30px;">
+                                </td>
+                                <td id="buzzer" style="cursor: pointer;padding-left: 10px;" onclick="open_window(this)">Buzzer</td>
+                            </tr>
+                            <tr height='40px' class="row">
+                                <td width='30px'>
+                                    <img src='chrome.png' style="width: 30px;height: 30px;">
+                                </td>
+                                <td id='scribble' style="cursor: pointer;padding-left: 10px;" onclick="open_window(this)">Scribble</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="info">
+            Please use in FullScreen mode
+            <button id="info_close" onclick="close_info()"><i class="fa fa-close" style="color:red"></i></button>
+        </div>
+        <div id="menu_window">
+            <button id="window_close" onclick="window_close()" title="close"><i class="fa fa-close" style="color:red"></i></button>
+            <button id="window_max_min" onclick="window_maximize()" title="maximize"><i class="fa fa-window-maximize"></i></button>
+        </div>
+        <iframe src="" id="window"></iframe>
+        <img src="chrome.png" class ='desktop_icon' ondblclick="open_window(this)" id="buzzer"><br><span class="outline" style="padding-left: 2px;">Buzzer</span><br><br>
+        <img src="chrome.png" class ='desktop_icon' ondblclick="open_window(this)" id="scribble"><br><span class="outline">Scribble</span>
+        <script>
+            var full_scr = 0;
+            var start_btn = 0;
+            var window_max = 0;
+            var window_mink = 0;
+            function open_window(o){
+                var frame = document.getElementById('window');
+                var menu = document.getElementById('menu_window');
+                document.getElementById('taskbar_open').style.display = 'none'
+                frame.style.display = 'block'
+                menu.style.display = 'block'
+                if(o.id=='buzzer'){
+                    frame.src = 'buzzer.html'
+                }
+                if(o.id=='scribble'){
+                    frame.src = 'scribble.html'
+                }
+                document.getElementById('task_min').style.backgroundColor = 'cyan'
+            }
+            function window_min(){
+                var frame = document.getElementById('window');
+                var menu = document.getElementById('menu_window');
+                document.getElementById('task_min').style.backgroundColor = 'cyan'
+                if(window_mink==0){
+                    frame.style.display = 'none';
+                    menu.style.display = 'none';
+                    window_mink = 1
+                }
+                else{
+                    frame.style.display = 'block';
+                    menu.style.display = 'block';
+                    window_mink = 0
+                }
+            }
+            function window_maximize(){
+                var frame = document.getElementById('window');
+                var menu = document.getElementById('menu_window');
+                if(window_max==0){
+                    menu.style.left = '-8px';
+                    menu.style.width = '100.5%';
+                    menu.style.top = '0px';
+                    frame.style.left = '-8px';
+                    frame.style.width = '100.5%';
+                    frame.style.top = '25px';
+                    frame.style.height = '800px'
+                    window_max = 1
+                }
+                else{
+                    window_max = 0;
+                    menu.style.left = '400px';
+                    menu.style.width = '600px';
+                    menu.style.top = '175px';
+                    frame.style.left = '400px';
+                    frame.style.width = '600px';
+                    frame.style.top = '200px';
+                    frame.style.height = '500px'
+                }
+            }
+            function close_info(){
+                document.getElementById('info').style.display = 'none'
+                document.documentElement.requestFullscreen();
+                document.getElementById('full_scr_btn').innerHTML = 'Revert';
+            }
+            function window_close(){
+                document.getElementById('window').style.display = 'none';
+                document.getElementById('menu_window').style.display = 'none';
+                document.getElementById('task_min').style.backgroundColor = 'rgba(0,0,0,0)';
+            }
+            function open_start(){
+                if(start_btn==0){
+                    document.getElementById('taskbar_open').style.display = 'block';
+                    start_btn = 1
+                }
+                else{
+                    document.getElementById('taskbar_open').style.display = 'none';
+                    start_btn = 0
+                }
+            }
+            function full_screen(){
+                if(full_scr==0){
+                    document.documentElement.requestFullscreen();
+                    full_scr = 1
+                    document.getElementById('full_scr_btn').innerHTML = 'Revert';
+                    close_info()
+                }
+                else{
+                    document.exitFullscreen();
+                    full_scr = 0
+                    document.getElementById('full_scr_btn').innerHTML = 'Switch to FullScreen';
+                }
+            }
+            function search_start() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("programs");
+                tr = table.getElementsByTagName("tr");
+                console.log(tr)
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1];
+                    if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                    }       
+                }
+            }
+        </script>
+    </body>
+</html>
