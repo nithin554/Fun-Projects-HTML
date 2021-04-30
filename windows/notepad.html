@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <style>
+            #text_region{
+                width: 100%;
+                height: 500px;
+            }
+            #menu{
+                width: 100%;
+                height: 25px;
+                background-color: lightgrey;
+            }
+            #fileToLoad{
+                position: absolute;
+                right: 0px;
+                top: 10px;
+            }
+            #save,#clear{
+                background-color: lightgray;
+                width: 60px;
+                height: 25px;
+                border-style: none;
+                cursor: pointer;
+            }
+            #save:hover,#clear:hover{
+                background-color: lightgreen;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="menu">
+            <button id="save" onclick="download()">Save</button>
+            <button id="clear" onclick="clr()">Clear</button>
+            <input type="file" id="fileToLoad" onchange="loadFileAsText()">
+        </div>
+        <div id="div1">
+            <textarea id="text_region"></textarea>
+        </div>
+        <script>
+            function download(){
+                var text = document.getElementById("text_region").value;
+                text = text.replace(/\n/g, "\r\n"); // To retain the Line breaks.
+                var blob = new Blob([text], { type: "text/plain"});
+                var anchor = document.createElement("a");
+                var name = prompt("Please enter your file name with extension", "filename.txt");
+                if(name != null){
+                    anchor.download = name;
+                    anchor.href = window.URL.createObjectURL(blob);
+                    anchor.target ="_blank";
+                    anchor.style.display = "none"; // just to be safe!
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                }
+                document.body.removeChild(anchor);
+            }
+            function loadFileAsText()
+            {
+                var fileToLoad = document.getElementById("fileToLoad").files[0];
+            
+                var fileReader = new FileReader();
+                fileReader.onload = function(fileLoadedEvent) 
+                {
+                    var textFromFileLoaded = fileLoadedEvent.target.result;
+                    document.getElementById("text_region").value = textFromFileLoaded;
+                };
+                fileReader.readAsText(fileToLoad, "UTF-8");
+            }
+            function clr(){
+                if(confirm('Are you sure to clear the text area?')){
+                    document.getElementById('text_region').value = ''
+                }
+            }
+        </script>
+    </body>
+</html>
