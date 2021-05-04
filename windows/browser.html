@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <style>
+            #web_page{
+                width: 100%;
+                height: 750px;
+            }
+            #menu{
+                width: 100.2%;
+                height: 25px;
+                background-color: lightgrey;
+            }
+            #go{
+                position: absolute;
+                left: 1060px;
+                background-color: lightgray;
+                width: 60px;
+                height: 25px;
+                border-style: none;
+                cursor: pointer;
+            }
+            #go:hover{
+                background-color: lightgreen;
+            }
+            #address_field{
+                position: relative;
+                left: 50px;
+                width: 1000px;
+                border-radius: 10px;
+                outline: none;
+            }
+            #address_field:focus{
+                border-color: cyan;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="menu">
+            <button id="back" onclick="web_page.history.back()">Back</button>
+            <button id="forward" onclick="navigate(this)">Forward</button>
+            <input type="url" id="address_field" value="http:\\www.google.com">
+            <button id="go" onclick="view_page()">Go!</button>
+        </div>
+        <div id="div1">
+            <iframe src="" id="web_page" name="web_page"></iframe>
+        </div>
+        <script>
+            function navigate(o){
+                if(o.id=='back'){
+                    document.getElementById('web_page').contentWindow.history.back();
+                }
+                if(o.id=='forward'){
+                    document.getElementById('web_page').contentWindow.history.forward();
+                }
+            }
+            function view_page(){
+                document.getElementById('web_page').src = document.getElementById('address_field').value;
+            }
+        </script>
+    </body>
+</html>

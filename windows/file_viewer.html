@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <style>
+            #new_frame{
+                width: 100%;
+                height: 750px;
+            }
+            #menu{
+                width: 100.2%;
+                height: 25px;
+                background-color: lightgrey;
+            }
+            #view_file{
+                position: absolute;
+                right: 0px;
+                top: 10px;
+            }
+            #clear{
+                background-color: lightgray;
+                width: 60px;
+                height: 25px;
+                border-style: none;
+                cursor: pointer;
+            }
+            #clear:hover{
+                background-color: lightgreen;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="menu">
+            <button id="clear" onclick="clr()">Clear</button>
+            <input type="file" id="view_file" onchange="view_file()">
+        </div>
+        <div id="div1">
+            <iframe src="" id="new_frame"></iframe>
+        </div>
+        <script>
+            function clr(){
+                document.getElementById('new_frame').src = ''
+                document.getElementById('view_file').value = ''
+            }
+            function view_file()
+            {
+                var fileToLoad = document.getElementById("view_file").files[0];
+                var fileReader = new FileReader();
+                fileReader.onload = function(fileLoadedEvent) 
+                {
+                    var file_loaded = fileLoadedEvent.target.result;
+                    console.log(file_loaded)
+                    document.getElementById('new_frame').src = file_loaded
+                };
+                fileReader.readAsDataURL(fileToLoad);
+            }
+        </script>
+    </body>
+</html>

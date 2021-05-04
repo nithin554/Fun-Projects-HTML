@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <style>
+            #aim_canvas{
+                position: absolute;
+                top: 100px;
+                border-style: solid;
+                border-width: 1px;
+            }
+            #menu{
+                width: 100%;
+                height: 25px;
+                background-color: lightgrey;
+            }
+            #console{
+                position: absolute;
+                left: 20px;
+                width: 200px;
+                height: 25px;
+                border-style: none;
+            }
+            #console2{
+                position: absolute;
+                left: 240px;
+                width: 200px;
+                height: 25px;
+                border-style:none;
+            }
+            #accuracy{
+                position: absolute;
+                left: 480px;
+                width: 200px;
+                height: 25px;
+                border-style:none;
+            }
+            #radius{
+                position: absolute;
+                right: 100px;
+                width: 50px;
+                height: 25px;
+                padding-left: 10px;
+            }
+            #size_btn{
+                position: absolute;
+                right: 20px;
+                width: 75px;
+                height: 25px;
+                background-color: lightgray;
+                border-style: none;
+            }
+            #size_btn:hover,#interv_btn:hover,#start_app:hover,#end_app:hover{
+                cursor: pointer;
+                background-color: lightgreen;
+            }
+            #interv{
+                position: absolute;
+                right: 260px;
+                width: 50px;
+                height: 25px;
+                padding-left: 10px;
+            }
+            #interv_btn{
+                position: absolute;
+                right: 160px;
+                width: 100px;
+                height: 25px;
+                background-color: lightgray;
+                border-style: none;
+            }
+            #start_app{
+                position: absolute;
+                left: 700px;
+                width: 100px;
+                height: 25px;
+                background-color: lightgray;
+                border-style: none;
+            }
+            #end_app{
+                position: absolute;
+                left: 800px;
+                width: 100px;
+                height: 25px;
+                background-color: lightgray;
+                border-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="aim_canvas" width="1500" height="500">Canvas</canvas>
+        <div id="menu">
+            <input type="number" id="radius" value="20" placeholder="Set radius of target">
+            <button id="size_btn" onclick="set_radius()">Set Size</button>
+            <input type="number" id="interv" value="1" min="0" max="5" placeholder="Set interval between targets">
+            <button id="interv_btn" onclick="set_interv()">Set Interval</button>
+            <button id="start_app" onclick="started()">Start</button>
+            <button id="end_app" onclick="ended()">End</button>
+            <input type="text" id="console" disabled>
+            <input type="text" id="console2" disabled onchange="cal_acc()">
+            <input type="text" id="accuracy" disabled>
+        </div>
+        <p style="padding-left: 100px;">Please play in maximized/FullScreen mode for better experience</p>
+        <script>
+            var canvas = document.getElementById("aim_canvas");
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = 'orange'
+            var imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+            var x;
+            var y;
+            var score = 0;
+            var misses = 0;
+            var endk = 0;
+            var draw_interval = 1000;
+            var size = document.getElementById('radius').value
+            document.getElementById('aim_canvas').addEventListener('mousedown',record,false)
+            function ended(){
+                endk = 1;
+            }
+            function set_radius(){
+                var temp = document.getElementById('radius').value;
+                if(temp){
+                    size = temp;
+                }
+            }
+            function set_interv(){
+                var temp = parseInt(document.getElementById('interv').value);
+                if(temp){
+                    draw_interval = temp*1000;
+                    console.log(draw_interval)
+                }
+            }
+            function draw(){
+                ctx.putImageData(imageData,0,0);
+                ctx.beginPath();
+                x = Math.floor(Math.random() * (canvas.width-100-parseInt(size)-50)) + parseInt(size)+50
+                y = Math.floor(Math.random() * (canvas.height-100-parseInt(size)-50)) + parseInt(size)+50
+                //console.log(x,y)
+                ctx.arc(x, y, parseInt(size), 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.closePath();
+                misses = misses + 1;
+                document.getElementById('console2').value = 'Misses : ' + misses;
+                document.getElementById('accuracy').value = 'Accuracy : ' + score/(misses+score) * 100;
+                if(endk==0){
+                    setTimeout(draw,draw_interval);
+                }
+            }
+            function started(){
+                document.getElementById('console').value = ''
+                document.getElementById('console2').value = ''
+                score = 0
+                endk = 0
+                misses = 0
+                size = document.getElementById('radius').value
+                draw_interval = parseInt(document.getElementById('interv').value)*1000;
+                draw();
+            }
+            function dist(x1,x2,y1,y2){
+                console.log(x1,x2,y1,y2)
+                return Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2))
+            }
+            function record(){
+                var mouseX = event.clientX-9
+                var mouseY = event.clientY
+                var distance = dist(x,mouseX,y+100,mouseY)
+                //console.log(distance,parseInt(size))
+                if(distance<parseInt(size)){
+                    score = score + 1;
+                    document.getElementById('console').value = 'Score : ' + score;
+                    misses = misses - 1;
+                    document.getElementById('console2').value = 'Misses : ' + misses;
+                    document.getElementById('accuracy').value = 'Accuracy : ' + score/(misses+score) * 100;
+                }
+                else{
+                    misses = misses + 1;
+                    document.getElementById('console2').value = 'Misses : ' + misses;
+                }
+            }
+        </script>
+    </body>
+</html>

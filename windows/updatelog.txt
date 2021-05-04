@@ -1,0 +1,5 @@
+[INFO]Windows update log(30-04-2021):
+*Drag to move window added
+*Open apps in fullscreen added
+*Notepad added
+*Minor bug fixes and UI improvements

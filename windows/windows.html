@@ -38,6 +38,7 @@
                 width: 330px;
                 background-color: rgba(0, 0, 0, 0.7);
                 display: none;
+                z-index: 2;
             }
             #info{
                 position: absolute;
@@ -124,6 +125,7 @@
                 height: 50px;
                 width: 50px;
                 z-index: 0;
+                left: 15px;
             }
             span{
                 color: black;
@@ -156,7 +158,7 @@
         <div id="taskbar">
             <img src="start_btn.png" id="start" onclick="open_start()">
             <!--app minimize function needed-->
-            <input type="text" id="myInput" onkeyup="search_start()" placeholder="Type here to search">
+            <input type="text" id="myInput" onkeyup="search_start()" onfocus="document.getElementById('taskbar_open').style.display = 'block';start_btn = 1;" placeholder="Type here to search">
             <img src="chrome.png" id="task_min" onclick="window_min()">
         </div>
         <div id="taskbar_open">
@@ -185,6 +187,18 @@
                                 </td>
                                 <td id='notepad' style="cursor: pointer;padding-left: 10px;" onclick="open_window(this)">Notepad</td>
                             </tr>
+                            <tr height='40px' class="row">
+                                <td width='30px'>
+                                    <img src='file_viewer.png' style="width: 30px;height: 30px;">
+                                </td>
+                                <td id='file_viewer' style="cursor: pointer;padding-left: 10px;" onclick="open_window(this)">File Viewer</td>
+                            </tr>
+                            <tr height='40px' class="row">
+                                <td width='30px'>
+                                    <img src='aim_trainer.png' style="width: 30px;height: 30px;">
+                                </td>
+                                <td id='aim_trainer' style="cursor: pointer;padding-left: 10px;" onclick="open_window(this)">Aim Trainer</td>
+                            </tr>
                         </table>
                     </td>
                 </tr>
@@ -201,9 +215,11 @@
             <button id="fullscrn" onclick="window_full_scrn()" title="Enter Full Screen"><img id="fullscr_icon" src="enter_full_scr.png" style="height: 23px;width: 23px;"></button>
         </div>
         <iframe src="" id="window"></iframe>
-        <img src="chrome.png" class ='desktop_icon' ondblclick="open_window(this)" id="buzzer"><br><span class="outline" style="padding-left: 2px;">Buzzer</span><br><br>
-        <img src="chrome.png" class ='desktop_icon' ondblclick="open_window(this)" id="scribble"><br><span class="outline">Scribble</span><br><br>
-        <img src="notepad.png" class ='desktop_icon' ondblclick="open_window(this)" id="notepad"><br><span class="outline">Notepad</span>
+        <img src="chrome.png" class ='desktop_icon' ondblclick="open_window(this)" id="buzzer"><br><span class="outline" style="padding-left: 15px;">Buzzer</span><br><br>
+        <img src="chrome.png" class ='desktop_icon' ondblclick="open_window(this)" id="scribble"><br><span class="outline" style="padding-left: 12px;">Scribble</span><br><br>
+        <img src="notepad.png" class ='desktop_icon' ondblclick="open_window(this)" id="notepad"><br><span class="outline" style="padding-left: 10px;">Notepad</span><br><br>
+        <img src="file_viewer.png" class ='desktop_icon' ondblclick="open_window(this)" id="file_viewer"><br><span class="outline" style="padding-left: 25px;">Files</span><br><br>
+        <img src="aim_trainer.png" class ='desktop_icon' ondblclick="open_window(this)" id="aim_trainer"><br><span class="outline">Aim Trainer</span><br><br>
         <script>
             var full_scr = 0;
             var start_btn = 0;
@@ -217,11 +233,11 @@
                 frame.style.display = 'block'
                 menu.style.display = 'block'
                 frame.src = o.id + '.html'
-                if(o.id=='notepad'){
-                    document.getElementById('task_min').src = o.id + '.png'
+                if(o.id=='buzzer' || o.id=='scribble'){
+                    document.getElementById('task_min').src = 'chrome.png'
                 }
                 else{
-                    document.getElementById('task_min').src = 'chrome.png'
+                    document.getElementById('task_min').src = o.id + '.png'
                 }
                 document.getElementById('task_min').style.backgroundColor = 'cyan'
             }
@@ -298,7 +314,7 @@
             function open_start(){
                 if(start_btn==0){
                     document.getElementById('taskbar_open').style.display = 'block';
-                    start_btn = 1
+                    start_btn = 1;
                 }
                 else{
                     document.getElementById('taskbar_open').style.display = 'none';
@@ -334,7 +350,7 @@
                     } else {
                         tr[i].style.display = "none";
                     }
-                    }       
+                    }
                 }
             }
         </script>
