@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <style>
+            body{
+                overflow: hidden;
+            }
+            #left{
+                position: absolute;
+                left: 300px;
+                top: 100px;
+                width: 20px;
+                background-color: olive;
+                height: 500px;
+            }
+            #right{
+                position: absolute;
+                right: 300px;
+                top: 100px;
+                width: 20px;
+                background-color: olive;
+                height: 500px;
+            }
+            #left_bar{
+                position: absolute;
+                left: 322px;
+                top: 100px;
+                width: 20px;
+                background-color: black;
+                height: 100px;
+            }
+            #right_bar{
+                position: absolute;
+                right: 322px;
+                top: 100px;
+                width: 20px;
+                background-color: black;
+                height: 100px;
+            }
+            #ball{
+                position: absolute;
+                left: 342px;
+                top: 120px;
+                width: 20px;
+                height: 20px;
+                background-color: red;
+                border-radius: 20px;
+            }
+            #border{
+                position: absolute;
+                z-index: 0;
+                top: 100px;
+                left: 300px;
+                width: 935px;
+                height: 498px;
+                border-style: solid;
+                border-width: 1px;
+            }
+            #note{
+                position: absolute;
+                left: 470px;
+                top: 620px;
+            }
+            #winner{
+                position: absolute;
+                left: 350px;
+                top: 200px;
+                font-size: 30px;
+                color: royalblue;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="border">
+            <b id="winner"></b>
+        </div>
+        <div id="left">
+
+        </div>
+        <div id="right">
+
+        </div>
+        <div id="left_bar">
+
+        </div>
+        <div id="right_bar">
+
+        </div>
+        <div id="ball">
+
+        </div>
+        <!-- <label>Player 1 Score : </label>
+        <input type="text" id="player1" disabled value="0">
+        <label>Player 2 Score : </label>
+        <input type="text" id="player2" disabled value="0"> -->
+        <button onclick="init()">Start</button>
+        <button onclick="end_ball()">Pause</button>
+        <button onclick="location.reload()">Reset</button>
+        <br><br>
+        <input type="text" id="speed" min="1" max="10" placeholder="speed of the ball" value="2">
+        <button onclick="set_speed()">Set Speed</button>
+        <br><br>
+        <input type="text" id="sens" min="10" max="50" placeholder="Sensitivity" value="10">
+        <button onclick="set_sens()">Set Sensitivity</button>
+        <br><br>
+        <select id="bar_size" onchange="set_bar_size()">
+            <option value="100">100</option>
+            <option value="150">150</option>
+            <option value="200">200</option>
+        </select>
+        <b id="note">Note: Player 1 use W,S and Player 2 use Up,Down arrows to control the bar</b>
+        <script>
+            var top_px_left = 100;
+            var top_px_right = 100;
+            var ball_left = 342;
+            var ball_top = 120;
+            var pos = 1;
+            var vert = 1;
+            var speed = 2;
+            var end = 0;
+            var player1 = 0;
+            var player2 = 0;
+            var size = 100;
+            var restart = 0;
+            var sens = 10;
+            function set_bar_size(){
+                size = parseInt(document.getElementById('bar_size').value)
+                document.getElementById('left_bar').style.height = size;
+                document.getElementById('right_bar').style.height = size;
+            }
+            function set_speed(){
+                speed = parseInt(document.getElementById('speed').value);
+            }
+            function set_sens(){
+                sens = parseInt(document.getElementById('sens').value);
+            }
+            function init(){
+                if(restart==1){
+                    restart = 0;
+                    location.reload();
+                    return;
+                }
+                end = 0
+                document.getElementById('speed').disabled = true;
+                document.getElementById('bar_size').disabled = true;
+                document.getElementById('sens').disabled = true;
+                document.getElementById('winner').style.display = 'none';
+                document.addEventListener('keypress',move1,false);
+                document.addEventListener('keydown',move2,false);
+                ball_fun();
+            }
+            function end_ball(){
+                end = 1;
+                document.removeEventListener('keypress',move1,false);
+                document.removeEventListener('keydown',move2,false);
+                document.getElementById('speed').disabled = false;
+                document.getElementById('bar_size').disabled = false;
+                document.getElementById('sens').disabled = false;
+            }
+            function ball_fun(){
+                if(end==1){
+                    return
+                }
+                if(pos==1){
+                    ball_left = ball_left + speed;
+                    document.getElementById('ball').style.left = ball_left + 'px'
+                }
+                else{
+                    ball_left = ball_left - speed;
+                    document.getElementById('ball').style.left = ball_left + 'px'
+                }
+                if(vert==1){
+                    ball_top = ball_top + speed;
+                    document.getElementById('ball').style.top = ball_top + 'px'
+                }
+                else{
+                    ball_top = ball_top - speed;
+                    document.getElementById('ball').style.top = ball_top + 'px'
+                }
+                if(ball_left>1175){
+                    pos = 0
+                    if(ball_top+20>top_px_right && ball_top<top_px_right+size){
+                        //nothing
+                    }
+                    else{
+                        document.getElementById('winner').style.display = 'block';
+                        document.getElementById('winner').innerHTML = 'Player 1 Wins!!!'
+                        restart = 1;
+                        end_ball();
+                        //player1 = player1 + 1;
+                        //document.getElementById('player1').value = player1;
+                    }
+                }
+                if(ball_left<342){
+                    pos = 1
+                    if(ball_top+20>top_px_left && ball_top<top_px_left+size){
+                        //nothing
+                    }
+                    else{
+                        document.getElementById('winner').style.display = 'block';
+                        document.getElementById('winner').innerHTML = 'Player 2 Wins!!!'
+                        restart = 1;
+                        end_ball();
+                        //player2 = player2 + 1;
+                        //document.getElementById('player2').value = player2;
+                    }
+                }
+                if(ball_top<100){
+                    vert = 1
+                }
+                if(ball_top>580){
+                    vert = 0
+                }
+                setTimeout(ball_fun,5)
+            }
+            function move1(){
+                //console.log(event.keyCode)
+                if(event.keyCode===115){
+                    top_px_left = top_px_left + sens;
+                    if(top_px_left>600-size){
+                        top_px_left = 600-size;
+                    }
+                    document.getElementById('left_bar').style.top = top_px_left + 'px'
+                }
+                if(event.keyCode===119){
+                    top_px_left = top_px_left - sens;
+                    if(top_px_left<100){
+                        top_px_left = 100;
+                    }
+                    document.getElementById('left_bar').style.top = top_px_left + 'px'
+                }
+            }
+            function move2(){
+                if(event.keyCode===40){
+                    top_px_right = top_px_right + sens;
+                    if(top_px_right>600-size){
+                        top_px_right = 600-size;
+                    }
+                    document.getElementById('right_bar').style.top = top_px_right + 'px'
+                }
+                if(event.keyCode===38){
+                    top_px_right = top_px_right - sens;
+                    if(top_px_right<100){
+                        top_px_right = 100;
+                    }
+                    document.getElementById('right_bar').style.top = top_px_right + 'px'
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -3,3 +3,12 @@
 *Open apps in fullscreen added
 *Notepad added
 *Minor bug fixes and UI improvements
+
+[INFO]Windows update log(03-05-2021):
+*Aim trainer added - Test your accuracy
+*File viewer added(Still in beta, only supports PDFs,Images,Text files so far)
+*Minor bug fixes and UI improvements
+
+[INFO]Windows update lo(12-05-2021):
+*Ping Pong game added
+*Minor bug fixes and UI improvements
