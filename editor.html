@@ -1,0 +1,51 @@
+<html ng-app="myApp">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-sanitize.js"></script>
+        <title>Fun Project</title>
+        <style>
+            #left,#right{
+                width: 50%;
+                height: 100%;
+            }
+            #left{
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                background-color: black;
+            }
+            #right{
+                position: absolute;
+                left: 50%;
+                top: 0px;
+                background-color: white;
+            }
+            #console{
+                background-color: black;
+                color: white;
+                width: 99.89%;
+                height: 100%;
+                border-color: gray;
+                border-width: 5px;
+            }
+            #console:focus{
+                outline: none;
+            }
+            #frame{
+                width: 98.7%;
+                height: 98.5%;
+                border-color: gray;
+                border-width: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="left">
+            <textarea id="console" ng-model="consoleData"><!-- Live Reload Available --></textarea>
+        </div>
+        <div id="right" ng-bind-html="consoleData"></div>
+        <script>
+            var app = angular.module('myApp', ['ngSanitize']);
+        </script>
+    </body>
+</html>
