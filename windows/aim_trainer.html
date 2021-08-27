@@ -109,11 +109,14 @@
             var score = 0;
             var misses = 0;
             var endk = 0;
+            var startk = 0;
             var draw_interval = 1000;
+            var missed = false;
             var size = document.getElementById('radius').value
-            document.getElementById('aim_canvas').addEventListener('mousedown',record,false)
+            //document.getElementById('aim_canvas').addEventListener('mousedown',record,false)
             function ended(){
                 endk = 1;
+                startk = 0;
             }
             function set_radius(){
                 var temp = document.getElementById('radius').value;
@@ -129,6 +132,14 @@
                 }
             }
             function draw(){
+                if(endk==1){
+                    return;
+                }
+                if(missed){
+                    misses = misses + 1;
+                }
+                missed = true;
+                document.getElementById('aim_canvas').addEventListener('mousedown',record,false)
                 ctx.putImageData(imageData,0,0);
                 ctx.beginPath();
                 x = Math.floor(Math.random() * (canvas.width-100-parseInt(size)-50)) + parseInt(size)+50
@@ -137,7 +148,7 @@
                 ctx.arc(x, y, parseInt(size), 0, 2 * Math.PI);
                 ctx.fill();
                 ctx.closePath();
-                misses = misses + 1;
+                //misses = misses + 1;
                 document.getElementById('console2').value = 'Misses : ' + misses;
                 document.getElementById('accuracy').value = 'Accuracy : ' + score/(misses+score) * 100;
                 if(endk==0){
@@ -145,11 +156,16 @@
                 }
             }
             function started(){
+                if(startk==1){
+                    return;
+                }
                 document.getElementById('console').value = ''
                 document.getElementById('console2').value = ''
+                startk = 1
                 score = 0
                 endk = 0
                 misses = 0
+                missed = false
                 size = document.getElementById('radius').value
                 draw_interval = parseInt(document.getElementById('interv').value)*1000;
                 draw();
@@ -166,7 +182,7 @@
                 if(distance<parseInt(size)){
                     score = score + 1;
                     document.getElementById('console').value = 'Score : ' + score;
-                    misses = misses - 1;
+                    //misses = misses - 1;
                     document.getElementById('console2').value = 'Misses : ' + misses;
                     document.getElementById('accuracy').value = 'Accuracy : ' + score/(misses+score) * 100;
                 }
@@ -174,6 +190,8 @@
                     misses = misses + 1;
                     document.getElementById('console2').value = 'Misses : ' + misses;
                 }
+                missed = false;
+                document.getElementById('aim_canvas').removeEventListener('mousedown',record,false)
             }
         </script>
     </body>
