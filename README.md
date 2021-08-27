@@ -13,3 +13,5 @@
 * Try it out here : https://windows-desktop-clone-html.web.app/
 
 * HTML Editor - A plain Text Editor for HTML pages with a live reload support (editor.html)
+
+* Try it out here : https://basic-editor-html.web.app/
