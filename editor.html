@@ -24,7 +24,7 @@
                 background-color: black;
                 color: white;
                 width: 99.89%;
-                height: 100%;
+                height: 96.5%;
                 border-color: gray;
                 border-width: 5px;
             }
@@ -36,16 +36,95 @@
                 height: 98.5%;
                 border-color: gray;
                 border-width: 5px;
+                border-style: solid;
+            }
+            #menu{
+                width: 100%;
+                height: 25px;
+                background-color: lightgrey;
+            }
+            #fileToLoad{
+                position: absolute;
+                right: 0px;
+                top: 2px;
+            }
+            #save,#clear{
+                background-color: lightgray;
+                width: 60px;
+                height: 25px;
+                border-style: none;
+                cursor: pointer;
+            }
+            #save:hover,#clear:hover{
+                background-color: lightgreen;
             }
         </style>
     </head>
     <body>
         <div id="left">
+            <div id="menu">
+                <button id="save" onclick="download()">Save</button>
+                <button id="clear" onclick="clr()">Clear</button>
+                <form id="f1">
+                    <input type="file" id="fileToLoad" onchange="loadFileAsText()">
+                </form>
+            </div>
             <textarea id="console" ng-model="consoleData"><!-- Live Reload Available --></textarea>
         </div>
-        <div id="right" ng-bind-html="consoleData"></div>
+        <div id="right">
+            <div id="frame" ng-bind-html="consoleData"></div>
+        </div>
         <script>
             var app = angular.module('myApp', ['ngSanitize']);
+            function download(){
+                var text = document.getElementById("console").value;
+                text = text.replace(/\n/g, "\r\n"); // To retain the Line breaks.
+                var blob = new Blob([text], { type: "text/plain"});
+                var anchor = document.createElement("a");
+                var name = prompt("Please enter your file name with extension", "filename.html");
+                if(name != null){
+                    anchor.download = name;
+                    anchor.href = window.URL.createObjectURL(blob);
+                    anchor.target ="_blank";
+                    anchor.style.display = "none"; // just to be safe!
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                }
+                document.body.removeChild(anchor);
+            }
+            function loadFileAsText()
+            {
+                var fileToLoad = document.getElementById("fileToLoad").files[0];
+                f1.reset();
+                var fileReader = new FileReader();
+                fileReader.onload = function(fileLoadedEvent) 
+                {
+                    var textFromFileLoaded = fileLoadedEvent.target.result;
+                    document.getElementById("console").value = textFromFileLoaded;
+                };
+                fileReader.readAsText(fileToLoad, "UTF-8");
+            }
+            function clr(){
+                if(confirm('Are you sure to clear the text area?')){
+                    document.getElementById('console').value = ''
+                }
+            }
+            document.getElementById("console").addEventListener("keydown",function(e){
+                if(e.key == 'Tab'){
+                    e.preventDefault();
+                    document.execCommand("insertText", false, '\t');
+                    // var start = this.selectionStart;
+                    // var end = this.selectionEnd;
+
+                    // // set textarea value to: text before caret + tab + text after caret
+                    // this.value = this.value.substring(0, start) +
+                    // "    " + this.value.substring(end);
+
+                    // // put caret at right position again
+                    // this.selectionStart =
+                    // this.selectionEnd = start + 4;
+                }
+            })
         </script>
     </body>
 </html>
