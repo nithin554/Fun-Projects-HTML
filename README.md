@@ -15,3 +15,7 @@
 * HTML Editor - A plain Text Editor for HTML pages with a live reload support (editor.html)
 
 * Try it out here : https://basic-editor-html.web.app/
+
+* Flappy Bird - Flappy Bird with minimal UI made with HTML5 Canvas
+
+* Try it out here : https://flappy-bird-9b339.web.app/
