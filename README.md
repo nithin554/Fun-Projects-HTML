@@ -16,6 +16,6 @@
 
 * Try it out here : https://basic-editor-html.web.app/
 
-* Flappy Bird - Flappy Bird with minimal UI made with HTML5 Canvas
+* Flappy Bird - Flappy Bird with minimal UI and touch support. Made with HTML5 Canvas
 
 * Try it out here : https://flappy-bird-9b339.web.app/
