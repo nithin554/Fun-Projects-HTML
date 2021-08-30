@@ -1,0 +1,145 @@
+<html>
+    <head>
+        <title>Flappy Bird</title>
+        <meta name="viewport" content="width=device-width,initial-scale=0.58, maximum-scale=0.58, user-scalable=no" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="pipe.js"></script>
+        <style>
+            #myCanvas{
+                background-color: black;
+            }
+            #score{
+                background-color: gray;
+                z-index: 2;
+                position: absolute;
+                width: 80px;
+                height: 20px;
+                left: 508px;
+                top : 8px;
+                padding-left: 20px;
+                color: white;
+            }
+            #reset{
+                background-color: gray;
+                z-index: 2;
+                position: absolute;
+                width: 25px;
+                height: 25px;
+                left: 8px;
+                top: 8px;
+                padding-left: 5px;
+            }
+        </style>
+    </head>
+    <body onload="draw()">
+        <canvas id="myCanvas" width="600" height="700"></canvas>
+        <div id="score"></div>
+        <div id="reset" onclick="reload()"><i class="fa fa-refresh" aria-hidden="true" style="font-size: 25px;"></i></div>
+        <script>
+            function reload(){
+                location.reload()
+            }
+            function drawCircle(ctx,dy){
+                ctx.beginPath();
+                ctx.arc(50, dy, 15, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.closePath();
+            }
+            function clearCircle(ctx,dy,diff){
+                ctx.fillStyle = 'black';
+                ctx.strokeStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(50, dy-diff, 15.6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.closePath();
+                ctx.fillStyle = 'white';
+                ctx.strokeStyle = 'white';
+            }
+            var canvas = document.getElementById('myCanvas');
+            var x = 600;
+            var pipe;
+            var score = 0;
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            var dy = canvas.height/2;
+            drawCircle(ctx,dy);
+            var pipes = [];
+            var speed = 20;
+            var gravity = 4;
+            var jumped = false;
+            document.addEventListener('keydown',jump,false);
+            document.addEventListener('touchstart',jump,false);
+            function jump(){
+                jumped = true;
+                speed = 15;
+            }
+            var limit = Math.floor(canvas.height/4);
+            function draw(){
+                //console.log(score);
+                document.getElementById('score').innerText = 'Score : ' + score;
+                canvas.focus()
+                if(Math.random()<0.05){
+                    if(pipes.length<1){
+                        var h1 = Math.floor(Math.random()*(limit-30)) + limit;
+                        var h2 = Math.floor(Math.random()*(limit-30)) + limit;
+                        pipes.push(new Pipe(x,0,h1,-1));
+                        pipes.push(new Pipe(x,canvas.height-h2,h2,1));
+                    }
+                    else if(pipes.length>=1 && x - pipes[pipes.length-1].x > 100){
+                        var h1 = Math.floor(Math.random()*(limit-30)) + limit;
+                        var h2 = Math.floor(Math.random()*(limit-30)) + limit;
+                        pipes.push(new Pipe(x,0,h1,-1));
+                        pipes.push(new Pipe(x,canvas.height-h2,h2,1));
+                    }
+                }
+                for(let i=pipes.length-1;i>=0;i--){
+                    pipes[i].draw();
+                    pipes[i].x -= 1.5;
+                    if(pipes[i].x < -20){
+                        pipes.splice(i,1)
+                    }
+                    if(pipes[i].hits(dy)){
+                        ctx.font = "30px Arial";
+                        ctx.fillText("Game Over",200,300);
+                        console.log("Game Over");
+                        return;
+                    }
+                }
+                if(dy+15 >= canvas.height){
+                    ctx.fillStyle = 'red'
+                    ctx.font = "30px Arial";
+                    ctx.fillText("Game Over",200,300);
+                    drawCircle(ctx,canvas.height-12);
+                    console.log("Game Over");
+                    return;
+                }
+                else{
+                    if(jumped){
+                        dy -= speed-gravity;
+                        var diff = speed-gravity;
+                        speed -= 1;
+                        if(dy<0){
+                            dy = 0
+                            clearCircle(ctx,0,-diff);
+                            drawCircle(ctx,0);
+                        }
+                        else{
+                            clearCircle(ctx,dy,-diff);
+                            drawCircle(ctx,dy);
+                        }
+                        if(speed-gravity < 0){
+                            jumped = false;
+                        }
+                    }
+                    else{
+                        dy += gravity;
+                        clearCircle(ctx,dy,gravity);
+                        drawCircle(ctx,dy);
+                    }
+                }
+                setTimeout(draw,1000/60);
+            }
+        </script>
+    </body>
+</html>
